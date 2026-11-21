@@ -52,7 +52,7 @@ class DemoOperationsSeeder extends Seeder
         $this->kits();
         $this->maintenancePlans();
 
-        $now = now('UTC');
+        $now = now();
 
         // Late: two days overdue, so the dashboard and the fee have something to show.
         $this->out($customers[0], $now->copy()->subDays(5)->setTime(10, 0), $now->copy()->subDays(2)->setTime(10, 0), ['Hammer Drill' => 1]);
@@ -168,7 +168,7 @@ class DemoOperationsSeeder extends Seeder
      */
     private function closedRentalWithDamage(Customer $customer): void
     {
-        $start = now('UTC')->subDays(12)->setTime(9, 0);
+        $start = now()->subDays(12)->setTime(9, 0);
         $end = $start->copy()->addDays(2);
         $rental = $this->out($customer, $start, $end, ['Angle Grinder' => 1]);
 
