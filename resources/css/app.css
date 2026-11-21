@@ -1,0 +1,102 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+
+    --color-brand-50: #eff6ff;
+    --color-brand-100: #dbeafe;
+    --color-brand-500: #3b82f6;
+    --color-brand-600: #2563eb;
+    --color-brand-700: #1d4ed8;
+    --color-brand-900: #1e3a8a;
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+/* Toast notifications (SweetAlert2): a flat white card with a coloured edge. */
+.swal2-popup.swal2-toast.rd-toast {
+    display: flex !important;
+    align-items: center;
+    grid-row: 1 / 2 !important;
+    gap: 0.5rem;
+    align-self: start !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border-inline-start: 4px solid var(--rd-toast-color);
+    background: #fff;
+    box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.15), 0 0 0 1px rgb(0 0 0 / 0.05);
+}
+
+.rd-toast-success {
+    --rd-toast-color: #16a34a;
+}
+
+.rd-toast-error {
+    --rd-toast-color: #dc2626;
+}
+
+.rd-toast .swal2-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin: 0;
+    border-width: 0;
+    color: var(--rd-toast-color);
+}
+
+.rd-toast .swal2-icon .swal2-icon-content {
+    font-size: 1rem;
+}
+
+.rd-toast .swal2-icon.swal2-success [class^='swal2-success-line'] {
+    background-color: var(--rd-toast-color);
+}
+
+.rd-toast .swal2-icon.swal2-success .swal2-success-ring {
+    border-color: color-mix(in srgb, var(--rd-toast-color) 30%, transparent);
+}
+
+.rd-toast .swal2-icon.swal2-error {
+    border-color: var(--rd-toast-color);
+}
+
+.rd-toast .swal2-icon.swal2-error [class^='swal2-x-mark-line'] {
+    background-color: var(--rd-toast-color);
+}
+
+.rd-toast .swal2-title {
+    margin: 0;
+    padding: 0;
+    flex: 1;
+    color: #111827;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: start;
+}
+
+.rd-toast .swal2-close {
+    position: static;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-inline-start: auto;
+    font-size: 1.25rem;
+}
+
+.rd-toast .swal2-timer-progress-bar {
+    background: var(--rd-toast-color);
+    opacity: 0.35;
+}
+
+/* A field the server rejected gets a red border. */
+.has-error :is(input, select, textarea):not([type='checkbox'], [type='radio'], [type='hidden']) {
+    border-color: var(--color-red-500);
+}

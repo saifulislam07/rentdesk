@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RentDesk Documentation</title>
+<style>
+    :root { --ink: #111827; --muted: #4b5563; --line: #e5e7eb; --brand: #2563eb; --soft: #f3f4f6; --warn: #fef3c7; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 16px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); background: #fff; }
+    nav { position: fixed; inset: 0 auto 0 0; width: 260px; overflow-y: auto; background: #111827; padding: 24px 16px; }
+    nav .brand { color: #fff; font-weight: 700; font-size: 20px; padding: 0 8px 4px; }
+    nav .version { color: #9ca3af; font-size: 13px; padding: 0 8px 16px; }
+    nav a { display: block; color: #d1d5db; text-decoration: none; padding: 5px 8px; border-radius: 6px; font-size: 14px; }
+    nav a:hover { background: #1f2937; color: #fff; }
+    nav .group { color: #6b7280; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; padding: 16px 8px 4px; }
+    main { margin-left: 260px; max-width: 980px; padding: 40px 48px 80px; }
+    h1 { font-size: 34px; margin: 0 0 8px; }
+    h2 { font-size: 24px; margin: 56px 0 12px; padding-top: 16px; border-top: 1px solid var(--line); }
+    h3 { font-size: 18px; margin: 28px 0 8px; }
+    p, li { color: #1f2937; }
+    .lead { font-size: 18px; color: var(--muted); }
+    code { background: var(--soft); padding: 1px 6px; border-radius: 4px; font-size: 14px; }
+    pre { background: #111827; color: #f9fafb; padding: 14px 16px; border-radius: 8px; overflow-x: auto; font-size: 14px; }
+    pre code { background: none; padding: 0; color: inherit; }
+    table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 15px; }
+    th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+    th { background: var(--soft); }
+    .note { background: var(--warn); border-left: 4px solid #f59e0b; padding: 10px 14px; border-radius: 6px; margin: 16px 0; }
+    .tip { background: #eff6ff; border-left: 4px solid var(--brand); padding: 10px 14px; border-radius: 6px; margin: 16px 0; }
+    figure { margin: 16px 0 24px; }
+    figure img { max-width: 100%; border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+    figcaption { font-size: 13px; color: var(--muted); margin-top: 6px; }
+    ol.steps li { margin-bottom: 8px; }
+    @media (max-width: 860px) { nav { position: static; width: auto; } main { margin: 0; padding: 24px; } }
+</style>
+</head>
+<body>
+<nav>
+    <div class="brand">RentDesk</div>
+    <div class="version">Documentation · version 1.0.0</div>
+    <div class="group">Getting started</div>
+    <a href="#introduction">Introduction</a>
+    <a href="#package">What is in the download</a>
+    <a href="#requirements">Server requirements</a>
+    <a href="#installation">Installation</a>
+    <a href="#installer">The web installer</a>
+    <a href="#cron">Scheduler (cron job)</a>
+    <a href="#mail">Email</a>
+    <div class="group">Using RentDesk</div>
+    <a href="#first-steps">First steps</a>
+    <a href="#inventory">Inventory and QR labels</a>
+    <a href="#rentals">Rental workflow</a>
+    <a href="#billing">Invoices, deposits and late fees</a>
+    <a href="#maintenance">Maintenance, transfers and kits</a>
+    <a href="#booking">Public booking form</a>
+    <a href="#reports">Dashboard and reports</a>
+    <div class="group">Administration</div>
+    <a href="#settings">Settings</a>
+    <a href="#users">Users and roles</a>
+    <a href="#languages">Languages and translation</a>
+    <div class="group">Reference</div>
+    <a href="#customizing">Customizing</a>
+    <a href="#updating">Updating</a>
+    <a href="#troubleshooting">Troubleshooting</a>
+    <a href="#limitations">Known limitations</a>
+    <a href="#credits">Credits</a>
+    <a href="#support">Support</a>
+    <a href="#changelog">Changelog</a>
+</nav>
+
+<main>
+<h1 id="introduction">RentDesk</h1>
+<p class="lead">Equipment and tool rental management for hire shops: serial-tracked inventory with QR labels, availability without double-booking, quotes, contracts and invoices, check-out and check-in with inspections and signatures, deposits, late fees, maintenance and reports.</p>
+
+<p>Thank you for purchasing RentDesk. This guide takes you from the downloaded zip to a working installation, then explains each part of the application. If something is not covered here, see <a href="#support">Support</a>.</p>
+
+<figure><img src="images/01-dashboard.jpg" alt="RentDesk dashboard"><figcaption>The dashboard with the sample data loaded.</figcaption></figure>
+
+<h2 id="package">What is in the download</h2>
+<table>
+    <tr><th>Folder</th><th>Contents</th></tr>
+    <tr><td><code>rentdesk/</code></td><td>The complete application, ready to upload. Composer packages (<code>vendor/</code>) and the compiled CSS and JavaScript (<code>public/build/</code>) are included, so you do not need Composer or Node.js on the server.</td></tr>
+    <tr><td><code>documentation/</code></td><td>This guide.</td></tr>
+</table>
+
+<h2 id="requirements">Server requirements</h2>
+<ul>
+    <li><strong>PHP 8.3 or newer</strong> with these extensions: <code>openssl</code>, <code>pdo</code>, <code>pdo_mysql</code>, <code>mbstring</code>, <code>tokenizer</code>, <code>xml</code>, <code>dom</code>, <code>ctype</code>, <code>json</code>, <code>fileinfo</code>. <code>gd</code> is recommended (images in PDFs).</li>
+    <li><strong>MySQL 8</strong> or <strong>MariaDB 10.6+</strong>. SQLite also works for trying the app on your own computer, but use MySQL or MariaDB for a real business.</li>
+    <li>Apache with <code>mod_rewrite</code>, LiteSpeed, or Nginx.</li>
+    <li>Write permission on <code>storage/</code>, <code>bootstrap/cache/</code> and the main folder (for the <code>.env</code> file the installer writes).</li>
+    <li>Cron jobs (most hosts offer them in the control panel).</li>
+</ul>
+<p>The installer checks all of these for you and tells you exactly what is missing.</p>
+
+<h2 id="installation">Installation</h2>
+
+<h3>1. Create a database</h3>
+<p>In your hosting control panel (cPanel: <em>MySQL Databases</em>), create an empty database and a database user, and give the user all privileges on the database. Write down the database name, user name and password.</p>
+
+<h3>2. Upload the files</h3>
+<p>Upload the <strong>contents</strong> of the <code>rentdesk</code> folder to your server. Uploading the zip and extracting it on the server (cPanel File Manager → Extract) is much faster than uploading thousands of files over FTP. Make sure the hidden files <code>.htaccess</code> and <code>.env.example</code> are uploaded too.</p>
+
+<p>Then choose one of these two layouts:</p>
+
+<table>
+    <tr><th>Layout</th><th>When to use it</th><th>What to do</th></tr>
+    <tr>
+        <td><strong>A. Document root on <code>public/</code></strong> (recommended)</td>
+        <td>VPS, Laravel Forge, Ploi, or any host that lets you choose the folder a domain points to.</td>
+        <td>Upload to e.g. <code>/home/you/rentdesk</code> and set the domain's document root to <code>/home/you/rentdesk/public</code>.</td>
+    </tr>
+    <tr>
+        <td><strong>B. Everything in <code>public_html</code></strong></td>
+        <td>Shared hosting where the domain always points to <code>public_html</code> (or a sub-folder for a sub-domain).</td>
+        <td>Upload into <code>public_html</code>. The <code>.htaccess</code> file in the main folder sends every request to <code>public/</code> and keeps the code and <code>.env</code> private. This needs Apache or LiteSpeed with <code>mod_rewrite</code>.</td>
+    </tr>
+</table>
+
+<div class="note"><strong>Install on a domain or sub-domain</strong>, such as <code>rent.example.com</code>, not in a sub-folder like <code>example.com/rentdesk</code>.</div>
+
+<h3>Nginx</h3>
+<p>Point <code>root</code> at the <code>public</code> folder and use the standard Laravel configuration:</p>
+<pre><code>server {
+    server_name rent.example.com;
+    root /var/www/rentdesk/public;
+    index index.php;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.(?!well-known).* { deny all; }
+}</code></pre>
+
+<h3>3. Permissions</h3>
+<p>On most shared hosts the defaults are fine. On a VPS, give the web server user write access:</p>
+<pre><code>chmod -R 775 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache</code></pre>
+
+<h3>4. Open the site</h3>
+<p>Visit your domain. Until RentDesk is installed, every page leads to the installer at <code>/install</code>.</p>
+
+<h2 id="installer">The web installer</h2>
+<ol class="steps">
+    <li><strong>Requirements.</strong> Every required item must show <em>OK</em>. Fix anything marked <em>Missing</em> (usually a PHP extension you can switch on in the control panel's PHP settings, or a folder permission) and reload.
+        <figure><img src="images/install-1-requirements.jpg" alt="Installer: requirements"></figure></li>
+    <li><strong>Database.</strong> Enter the database details from step 1. The connection is tested before anything is saved; then the tables are created. On shared hosting the host is usually <code>localhost</code>.
+        <figure><img src="images/install-2-database.jpg" alt="Installer: database"></figure></li>
+    <li><strong>Administrator and business.</strong> Create your own sign-in, enter your business name and three-letter currency code (USD, EUR, BDT…). Tick <em>Add sample equipment, customers and rentals</em> if you want something to look around in first.
+        <figure><img src="images/install-3-administrator.jpg" alt="Installer: administrator"></figure></li>
+</ol>
+<p>The installer writes the <code>.env</code> file, switches debug mode off and creates <code>storage/app/installed.lock</code>. After that <code>/install</code> is closed (it returns “404 Not Found”).</p>
+
+<div class="tip">To start again from scratch, empty the database, delete <code>.env</code> and <code>storage/app/installed.lock</code>, and open the site.</div>
+
+<h2 id="cron">Scheduler (cron job)</h2>
+<p>Late fees, overdue reminder emails and maintenance tasks are created by the scheduler. Add <strong>one</strong> cron job that runs every minute. The installer's last page shows the exact line for your server; it looks like this:</p>
+<pre><code>* * * * * cd /home/you/rentdesk &amp;&amp; php artisan schedule:run &gt;&gt; /dev/null 2&gt;&amp;1</code></pre>
+<p>In cPanel: <em>Cron Jobs</em> → <em>Once Per Minute</em>, and paste the command. If your host needs a full PHP path, use the one it shows (for example <code>/usr/local/bin/php</code>).</p>
+<table>
+    <tr><th>Time (UTC)</th><th>Task</th></tr>
+    <tr><td>01:00</td><td>Creates maintenance tasks from maintenance plans</td></tr>
+    <tr><td>06:00</td><td>Updates late fees on overdue rentals</td></tr>
+    <tr><td>08:00</td><td>Emails customers whose rentals are overdue</td></tr>
+</table>
+<p>No queue worker is needed.</p>
+
+<h2 id="mail">Email</h2>
+<p>RentDesk emails invoices (with the PDF attached) and overdue reminders. Until mail is set up, messages are only written to the log. Open <code>.env</code> in the main folder and fill in the SMTP details from your email provider:</p>
+<pre><code>MAIL_MAILER=smtp
+MAIL_HOST=mail.example.com
+MAIL_PORT=587
+MAIL_USERNAME=rentals@example.com
+MAIL_PASSWORD=your-password
+MAIL_FROM_ADDRESS="rentals@example.com"
+MAIL_FROM_NAME="Your Business"</code></pre>
+<p>Password-reset emails for staff use the same settings.</p>
+
+<h2 id="first-steps">First steps</h2>
+<ol class="steps">
+    <li><strong>Settings</strong> — check the company name, currency, tax rate, invoice due days, late fee rules, language and date format.</li>
+    <li><strong>Users</strong> — add an account for each member of the team and give them a role.</li>
+    <li><strong>Locations</strong> — add each branch or depot. Every unit belongs to a location.</li>
+    <li><strong>Categories and brands</strong> — group your equipment.</li>
+    <li><strong>Products</strong> — add what you rent, with hourly, daily, weekly or monthly rates and a deposit.</li>
+    <li><strong>Units</strong> — add the individual items of each product (serial numbers), then print their QR labels.</li>
+    <li><strong>Customers</strong> — add customers, or create them while making a rental.</li>
+</ol>
+<p>If you installed the sample data, delete it from the lists when you are ready (administrators can delete records), or reinstall with an empty database.</p>
+
+<h2 id="inventory">Inventory and QR labels</h2>
+<p>A <strong>product</strong> is what you rent (for example “Hammer Drill”); a <strong>unit</strong> is one physical item with its own serial number, condition, status and location. Rates are set per product: daily, weekly and other periods, with an optional weekend price; RentDesk picks the cheapest combination for a rental period.</p>
+<figure><img src="images/07-product.jpg" alt="Product with units"><figcaption>A product with its rates and units.</figcaption></figure>
+<p>Each unit has a QR code. Use <em>Print QR labels</em> on a product to print a sheet of labels, and <em>Scan unit</em> in the menu to open a unit by scanning its label with a phone or tablet camera (the browser asks for camera permission; the site must use HTTPS for this on phones).</p>
+<p>Unit statuses: <em>Available</em>, <em>Reserved</em>, <em>Rented</em>, <em>Maintenance</em>, <em>In transit</em> and <em>Retired</em>. They change automatically as rentals, maintenance and transfers move along.</p>
+
+<h2 id="rentals">Rental workflow</h2>
+<table>
+    <tr><th>Status</th><th>Meaning</th></tr>
+    <tr><td>Quote</td><td>A price offer. Units are not held yet.</td></tr>
+    <tr><td>Reserved</td><td>Confirmed. The units are held for the period and cannot be double-booked.</td></tr>
+    <tr><td>Out</td><td>Checked out: the customer has the equipment.</td></tr>
+    <tr><td>Returned</td><td>Checked in. The deposit can now be settled.</td></tr>
+    <tr><td>Closed</td><td>Finished and settled.</td></tr>
+    <tr><td>Cancelled</td><td>Cancelled before check-out; the units are free again.</td></tr>
+</table>
+<ol class="steps">
+    <li><strong>New rental</strong>: choose the customer, location and period, then add units or kits. Use <em>Availability</em> or the <em>Calendar</em> to see what is free.</li>
+    <li><strong>Confirm</strong> the quote to reserve the units. Print the <em>Contract PDF</em> if you need a signed agreement.</li>
+    <li><strong>Check out</strong>: record the condition of each unit, meter readings, photos, the deposit taken and the customer's signature.</li>
+    <li><strong>Check in</strong>: record the return condition and any damage with its repair cost.</li>
+    <li><strong>Settle</strong> the deposit (refund it in full or keep part of it for damage) and <strong>create the invoice</strong>.</li>
+</ol>
+<figure><img src="images/10b-check-out.jpg" alt="Check-out with inspection and signature"><figcaption>Check-out: checklist, photos, deposit and signature.</figcaption></figure>
+<figure><img src="images/04-calendar.jpg" alt="Booking calendar"><figcaption>The calendar shows every reserved and rented unit.</figcaption></figure>
+
+<h2 id="billing">Invoices, deposits and late fees</h2>
+<ul>
+    <li><strong>Invoices</strong> are created from a rental (<em>Create invoice</em>). They can be edited until they are paid or void, downloaded as PDF and emailed to the customer (a draft then becomes <em>Sent</em>). Use <em>Mark as paid</em> when the customer pays; the dashboard counts every sent invoice that is not paid yet. Cancelling a rental voids its unpaid invoices.</li>
+    <li><strong>Deposits</strong> are recorded at check-out with the payment method and settled after check-in.</li>
+    <li><strong>Late fees</strong>: after the grace period (Settings, default 60 minutes) each started day late costs a percentage of the rental's average daily charge (default 100%). The scheduler updates them daily and the rental page shows the amount.</li>
+    <li><strong>Tax</strong> is applied after discounts, at the rate set in Settings.</li>
+</ul>
+<figure><img src="images/03-rental-overdue.jpg" alt="Overdue rental with late fee"><figcaption>An overdue rental with its late fee and held deposit.</figcaption></figure>
+
+<h2 id="maintenance">Maintenance, transfers and kits</h2>
+<ul>
+    <li><strong>Maintenance plans</strong> on a product create service tasks every so many days or rentals. Units with an open task are not offered for rent. Tasks can also be added by hand from a unit.</li>
+    <li><strong>Transfers</strong> move units between locations: a unit is <em>In transit</em> until the receiving location confirms it.</li>
+    <li><strong>Kits</strong> bundle several products (for example a “Photo shoot kit”) with an optional package price, and can be added to a rental in one step.</li>
+</ul>
+
+<h2 id="booking">Public booking form</h2>
+<p>Switch on <em>Public booking</em> in Settings to open a form at <code>https://your-domain/book</code>, which you can link from your website. Customers send a request; staff see it under <em>Booking requests</em> and turn it into a quote (<em>Create quote</em>) or reject it. The form is protected by a hidden honeypot field, a minimum fill time and rate limits (2 per minute and 6 per hour from one address).</p>
+
+<h2 id="reports">Dashboard and reports</h2>
+<p>The dashboard shows today's pick-ups and returns, overdue rentals, fleet status, unpaid invoices and revenue for the last six months. <em>Reports</em> (administrators and managers) cover utilization, revenue, damage and overdue rentals for any date range, each exportable as CSV.</p>
+<figure><img src="images/11-reports.jpg" alt="Reports"></figure>
+
+<h2 id="settings">Settings</h2>
+<figure><img src="images/15-settings.jpg" alt="Settings"></figure>
+<table>
+    <tr><th>Setting</th><th>Notes</th></tr>
+    <tr><td>Company name</td><td>Shown in the menu and on contracts and invoices.</td></tr>
+    <tr><td>Currency</td><td>Three-letter code. Applies to new rentals; existing rentals keep their currency.</td></tr>
+    <tr><td>Tax rate</td><td>Percent, applied after discounts.</td></tr>
+    <tr><td>Invoice due days</td><td>Days from issue until an invoice is due.</td></tr>
+    <tr><td>Late fee percent / grace minutes</td><td>See <a href="#billing">late fees</a>.</td></tr>
+    <tr><td>Default language, date and time format</td><td>For everyone who has not picked a language themselves.</td></tr>
+    <tr><td>Public booking</td><td>Opens or closes <code>/book</code>.</td></tr>
+</table>
+<p>All times are stored and shown in UTC.</p>
+
+<h2 id="users">Users and roles</h2>
+<p>Administrators manage team accounts under <em>Administration → Users</em>: add a person with a name, email, password and role, change their role, reset their password, or delete the account.</p>
+<figure><img src="images/17-users.jpg" alt="Users"></figure>
+<table>
+    <tr><th>Role</th><th>Can do</th></tr>
+    <tr><td>Administrator</td><td>Everything, including settings, languages, users and deleting records.</td></tr>
+    <tr><td>Manager</td><td>Everything except deleting records and changing settings, languages and users.</td></tr>
+    <tr><td>Staff</td><td>Views inventory; creates and edits rentals, customers, invoices and booking requests. No reports.</td></tr>
+</table>
+<p>An administrator cannot change their own role or delete their own account from the Users screen, and the only administrator cannot delete their account from the profile page, so the business can never be locked out. Everyone can change their own name, email and password under <em>Profile</em>. Forgotten passwords can be reset from the sign-in page once <a href="#mail">email</a> is set up.</p>
+
+<h2 id="languages">Languages and translation</h2>
+<p>English and Bengali (বাংলা) are included. Each user can switch language from the top bar or the sign-in page.</p>
+<figure><img src="images/16-languages.jpg" alt="Languages"></figure>
+<p>To add a language (Administration → Languages → Add language):</p>
+<ol class="steps">
+    <li>Enter its code (<code>fr</code>, <code>ar</code>, <code>pt-BR</code>…), its name and the text direction (right-to-left for Arabic, Hebrew, Urdu, Persian).</li>
+    <li>Download the language file. It is a JSON file listing every text in English on the left and the translation on the right.</li>
+    <li>Translate the right-hand side only, keeping words that start with a colon (like <code>:name</code>) unchanged.</li>
+    <li>Upload the file. It is checked and saved in <code>storage/app/lang</code>; untranslated texts are shown in English.</li>
+</ol>
+<p>Right-to-left languages mirror the whole layout. Contracts and invoice PDFs are always printed in English, because the PDF engine cannot shape Bengali or right-to-left scripts.</p>
+
+<h2 id="customizing">Customizing</h2>
+<p>RentDesk is a standard Laravel 13 application with Blade views, Tailwind CSS 4 and Alpine.js. The code is organised as:</p>
+<table>
+    <tr><th>Path</th><th>Contents</th></tr>
+    <tr><td><code>app/Services</code></td><td>Business rules: pricing, availability, bookings, handovers, deposits, late fees, invoices, reports.</td></tr>
+    <tr><td><code>app/Http/Controllers</code>, <code>app/Http/Requests</code></td><td>Pages and form validation.</td></tr>
+    <tr><td><code>resources/views</code></td><td>Blade templates (<code>pdf/</code> holds the contract and invoice).</td></tr>
+    <tr><td><code>resources/css</code>, <code>resources/js</code></td><td>Styles and scripts, compiled to <code>public/build</code>.</td></tr>
+    <tr><td><code>lang/bn.json</code></td><td>Bengali translation.</td></tr>
+    <tr><td><code>config/rentdesk.php</code></td><td>Defaults used until they are changed in Settings.</td></tr>
+</table>
+<p>After changing CSS or JavaScript, rebuild the assets on your computer and upload <code>public/build</code>:</p>
+<pre><code>npm install
+npm run build</code></pre>
+<p>To run the automated tests: <code>composer install</code> (with development packages), then <code>php artisan test</code>.</p>
+<div class="note">Keep a list of the files you change. Updates replace the application files, so your changes need to be applied again afterwards.</div>
+
+<h2 id="updating">Updating</h2>
+<ol class="steps">
+    <li>Back up your database and the <code>.env</code> file and <code>storage/</code> folder.</li>
+    <li>Upload the new files over the old ones. Do <strong>not</strong> overwrite <code>.env</code> or <code>storage/</code>.</li>
+    <li>Run the database updates and refresh caches and permissions:
+<pre><code>php artisan migrate --force
+php artisan db:seed --class=RoleSeeder --force
+php artisan optimize:clear</code></pre></li>
+</ol>
+<p>The changelog for each version lists anything else to do.</p>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3>“500 Server Error” or a blank page</h3>
+<p>Check <code>storage/logs/laravel.log</code> for the reason. Most often <code>storage/</code> or <code>bootstrap/cache/</code> is not writable, or the PHP version is older than 8.3. To see the error in the browser for a moment, set <code>APP_DEBUG=true</code> in <code>.env</code> — and set it back to <code>false</code> afterwards.</p>
+<h3>Pages other than the home page show “404 Not Found”</h3>
+<p>URL rewriting is not active. On Apache, make sure <code>mod_rewrite</code> is enabled, <code>AllowOverride All</code> is set for the folder and the <code>.htaccess</code> files were uploaded. On Nginx, use the configuration above.</p>
+<h3>The page looks unstyled</h3>
+<p>The <code>public/build</code> folder is missing or was not uploaded completely; upload it again. Also check that <code>APP_URL</code> in <code>.env</code> matches the address you use, including <code>https://</code>.</p>
+<h3>Brand logos do not show</h3>
+<p>The <code>public/storage</code> link is missing. Run <code>php artisan storage:link</code> in the main folder. If your host does not allow symbolic links or SSH, ask the host to create it.</p>
+<h3>Emails are not sent</h3>
+<p>Check the <code>MAIL_*</code> settings. With <code>MAIL_MAILER=log</code>, emails are only written to the log.</p>
+<h3>Late fees or maintenance tasks never appear</h3>
+<p>The <a href="#cron">cron job</a> is not running. You can run the tasks by hand to test: <code>php artisan rentals:calculate-late-fees</code>.</p>
+<h3>The camera does not open on “Scan unit”</h3>
+<p>Phones only allow the camera on HTTPS sites. Install an SSL certificate (most hosts offer a free one).</p>
+<h3>I forgot the administrator password</h3>
+<p>Use “Forgot your password?” on the sign-in page (needs email). Without email, run <code>php artisan tinker</code> and then <code>App\Models\User::where('email', 'you@example.com')->first()->update(['password' =&gt; 'new-password']);</code></p>
+
+<h2 id="limitations">Known limitations</h2>
+<ul>
+    <li>Invoices can be marked paid, but individual part-payments are not recorded.</li>
+    <li>All times are UTC; there is no time-zone setting yet.</li>
+    <li>Late fees are shown on the rental but not added to the invoice automatically.</li>
+    <li>The public booking form does not send confirmation emails.</li>
+    <li>PDFs are printed in English only.</li>
+</ul>
+
+<h2 id="credits">Credits</h2>
+<p>RentDesk is built with these open-source projects, each under its own licence: Laravel, spatie/laravel-permission, barryvdh/laravel-dompdf (Dompdf), simplesoftwareio/simple-qrcode, FakerPHP (sample data), Tailwind CSS, Alpine.js, FullCalendar, Flatpickr, SweetAlert2 and html5-qrcode. The Figtree font is loaded from Bunny Fonts.</p>
+
+<h2 id="support">Support</h2>
+<p>Support is provided through the item's <em>Support</em> tab on CodeCanyon. Please include your RentDesk version, PHP version, hosting type and the relevant lines from <code>storage/logs/laravel.log</code>. Support covers questions about the item's features, help with installation problems and fixes for bugs; it does not include custom work or installation on your server.</p>
+
+<h2 id="changelog">Changelog</h2>
+<h3>1.0.0</h3>
+<p>First release.</p>
+</main>
+</body>
+</html>
