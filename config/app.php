@@ -43,6 +43,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Demo Mode
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, the sign-in page lists the public demo logins. Only turn
+    | this on for the live demo site, never on a real installation.
+    |
+    */
+
+    'demo' => (bool) env('APP_DEMO', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application URL
     |--------------------------------------------------------------------------
     |

@@ -45,6 +45,7 @@
         </div>
     </form>
 
+    @if (config('app.demo'))
     <div class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
         <p class="text-sm font-medium text-gray-700">{{ __('Demo logins (click to fill)') }}</p>
         <table class="mt-2 w-full table-fixed border-collapse border border-gray-300 text-left text-xs text-gray-600">
@@ -67,4 +68,5 @@
             </tbody>
         </table>
     </div>
+    @endif
 </x-guest-layout>
