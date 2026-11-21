@@ -48,7 +48,7 @@
     @if (config('app.demo'))
     <div class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
         <p class="text-sm font-medium text-gray-700">{{ __('Demo logins (click to fill)') }}</p>
-        <table class="mt-2 w-full table-fixed border-collapse border border-gray-300 text-left text-xs text-gray-600">
+        <table class="mt-2 w-full table-fixed border-collapse border border-gray-300 text-start text-xs text-gray-600">
             <thead>
                 <tr class="bg-gray-100 text-xs uppercase text-gray-500">
                     <th class="w-1/5 border border-gray-300 px-1.5 py-1 font-medium">{{ __('Role') }}</th>
