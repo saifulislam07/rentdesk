@@ -44,4 +44,27 @@
             </x-primary-button>
         </div>
     </form>
+
+    <div class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <p class="text-sm font-medium text-gray-700">{{ __('Demo logins (click to fill)') }}</p>
+        <table class="mt-2 w-full table-fixed border-collapse border border-gray-300 text-left text-xs text-gray-600">
+            <thead>
+                <tr class="bg-gray-100 text-xs uppercase text-gray-500">
+                    <th class="w-1/5 border border-gray-300 px-1.5 py-1 font-medium">{{ __('Role') }}</th>
+                    <th class="w-1/2 border border-gray-300 px-1.5 py-1 font-medium">{{ __('Email') }}</th>
+                    <th class="border border-gray-300 px-1.5 py-1 font-medium">{{ __('Password') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ([['Admin', 'admin@gmail.com'], ['Manager', 'manager@rentdesk.test'], ['Staff', 'staff@rentdesk.test']] as [$demoRole, $demoEmail])
+                    <tr class="cursor-pointer hover:bg-gray-100"
+                        onclick="document.getElementById('email').value = '{{ $demoEmail }}'; document.getElementById('password').value = '111111';">
+                        <td class="border border-gray-300 px-1.5 py-1.5 break-words font-medium">{{ $demoRole }}</td>
+                        <td class="border border-gray-300 px-1.5 py-1.5 break-words">{{ $demoEmail }}</td>
+                        <td class="border border-gray-300 px-1.5 py-1.5 break-words">111111</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 </x-guest-layout>
