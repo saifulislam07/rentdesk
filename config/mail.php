@@ -115,4 +115,20 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Redirect All Mail
+    |--------------------------------------------------------------------------
+    |
+    | When set, every email goes to this one address instead of its recipients
+    | (CC and BCC are dropped). Use it on a public demo, where anyone can add a
+    | customer with a stranger's address, and leave it empty on a real install.
+    |
+    */
+
+    'to' => [
+        'address' => env('MAIL_TO_ADDRESS'),
+        'name' => env('MAIL_TO_NAME'),
+    ],
+
 ];
