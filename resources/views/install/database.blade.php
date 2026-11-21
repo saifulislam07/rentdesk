@@ -18,16 +18,16 @@
             </x-field>
 
             <div class="grid gap-5 sm:grid-cols-2" x-show="driver === 'mysql'">
-                <x-field name="host" :label="__('Host')">
-                    <x-text-input id="host" name="host" :value="$defaults['host']" />
+                <x-field name="db_host" :label="__('Host')">
+                    <x-text-input id="db_host" name="db_host" :value="$defaults['host']" />
                 </x-field>
-                <x-field name="port" :label="__('Port')">
-                    <x-text-input id="port" name="port" type="number" :value="$defaults['port']" />
+                <x-field name="db_port" :label="__('Port')">
+                    <x-text-input id="db_port" name="db_port" type="number" :value="$defaults['port']" />
                 </x-field>
                 <x-field name="username" :label="__('Username')">
                     <x-text-input id="username" name="username" :value="$defaults['username']" autocomplete="off" />
                 </x-field>
-                <x-field name="password" :label="__('Password')">
+                <x-field name="password" :label="__('Password')" :hint="$hasSavedPassword ? __('Leave blank to use the password saved in .env.') : null">
                     <x-text-input id="password" name="password" type="password" autocomplete="off" />
                 </x-field>
             </div>

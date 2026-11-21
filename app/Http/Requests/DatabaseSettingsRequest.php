@@ -14,12 +14,21 @@ class DatabaseSettingsRequest extends FormRequest
     {
         return [
             'driver' => ['required', Rule::in(['mysql', 'sqlite'])],
-            'host' => ['required_if:driver,mysql', 'nullable', 'string', 'max:255'],
-            'port' => ['nullable', 'integer', 'between:1,65535'],
+            // Not "host"/"port": hosting firewalls (ModSecurity, Imunify360) answer 403 to a POST carrying both.
+            'db_host' => ['required_if:driver,mysql', 'nullable', 'string', 'max:255'],
+            'db_port' => ['nullable', 'integer', 'between:1,65535'],
             'database' => ['required', 'string', 'max:255'],
             'username' => ['required_if:driver,mysql', 'nullable', 'string', 'max:255'],
             'password' => ['nullable', 'string', 'max:255'],
         ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return ['db_host' => __('Host'), 'db_port' => __('Port')];
     }
 
     /**
@@ -29,14 +38,33 @@ class DatabaseSettingsRequest extends FormRequest
      */
     public function settings(): array
     {
-        $settings = $this->safe()->only(['driver', 'host', 'port', 'database', 'username', 'password']) + [
-            'host' => null, 'port' => null, 'username' => null, 'password' => null,
+        $settings = $this->safe()->only(['driver', 'database', 'username', 'password']) + [
+            'host' => $this->validated('db_host'), 'port' => $this->validated('db_port'), 'username' => null, 'password' => null,
         ];
+
+        if ($settings['driver'] === 'mysql' && blank($settings['password']) && $this->matchesSavedConnection($settings)) {
+            $settings['password'] = config('database.connections.mysql.password');
+        }
 
         if ($settings['driver'] === 'sqlite' && $settings['database'] !== ':memory:' && ! preg_match('#^([a-zA-Z]:)?[\\\\/]#', $settings['database'])) {
             $settings['database'] = base_path($settings['database']);
         }
 
         return $settings;
+    }
+
+    /**
+     * A blank password means "keep the one in .env", but only for the same server, database and user.
+     *
+     * @param  array{host: string|null, database: string, username: string|null}  $settings
+     */
+    private function matchesSavedConnection(array $settings): bool
+    {
+        $saved = config('database.connections.mysql');
+
+        return filled($saved['password'] ?? null)
+            && $settings['host'] === ($saved['host'] ?? null)
+            && $settings['database'] === ($saved['database'] ?? null)
+            && $settings['username'] === ($saved['username'] ?? null);
     }
 }

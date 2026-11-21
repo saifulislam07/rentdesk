@@ -60,7 +60,7 @@ return [
             // Bookings re-check availability after waiting for a row lock; READ COMMITTED lets that re-check see the other booking.
             'isolation_level' => 'READ COMMITTED',
             'strict' => true,
-            'engine' => null,
+            'engine' => env('DB_ENGINE'),
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],

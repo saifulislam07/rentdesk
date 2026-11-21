@@ -139,7 +139,7 @@ class InstallerTest extends TestCase
     public function test_the_database_step_validates_its_input(): void
     {
         $this->post(route('install.database.save'), [])->assertSessionHasErrors(['driver', 'database']);
-        $this->post(route('install.database.save'), ['driver' => 'mysql', 'database' => 'rentdesk'])->assertSessionHasErrors(['host', 'username']);
+        $this->post(route('install.database.save'), ['driver' => 'mysql', 'database' => 'rentdesk'])->assertSessionHasErrors(['db_host', 'username']);
         $this->post(route('install.database.save'), ['driver' => 'oracle', 'database' => 'x'])->assertSessionHasErrors('driver');
     }
 
@@ -163,8 +163,8 @@ class InstallerTest extends TestCase
     {
         $this->post(route('install.database.save'), [
             'driver' => 'mysql',
-            'host' => '127.0.0.1',
-            'port' => 9,
+            'db_host' => '127.0.0.1',
+            'db_port' => 9,
             'database' => 'rentdesk',
             'username' => 'nobody',
             'password' => 'secret-pass',
@@ -180,11 +180,50 @@ class InstallerTest extends TestCase
     public function test_the_password_is_not_sent_back_to_the_form(): void
     {
         $response = $this->from(route('install.database'))->post(route('install.database.save'), [
-            'driver' => 'mysql', 'host' => '127.0.0.1', 'port' => 9, 'database' => 'x', 'username' => 'u', 'password' => 'secret-pass',
+            'driver' => 'mysql', 'db_host' => '127.0.0.1', 'db_port' => 9, 'database' => 'x', 'username' => 'u', 'password' => 'secret-pass',
         ]);
 
         $this->assertNull(session()->getOldInput('password'));
         $response->assertRedirect(route('install.database'));
+    }
+
+    public function test_the_database_form_is_prefilled_from_env_without_the_password(): void
+    {
+        config(['database.connections.mysql' => [
+            'host' => '10.0.0.5', 'port' => '3307', 'database' => 'saved_db', 'username' => 'saved_user', 'password' => 'saved-secret',
+        ] + config('database.connections.mysql')]);
+
+        $this->get(route('install.database'))
+            ->assertOk()
+            ->assertSee('value="10.0.0.5"', false)
+            ->assertSee('value="3307"', false)
+            ->assertSee('value="saved_db"', false)
+            ->assertSee('value="saved_user"', false)
+            ->assertSee('Leave blank to use the password saved in .env.')
+            ->assertDontSee('saved-secret');
+    }
+
+    public function test_a_blank_password_reuses_the_saved_one_only_for_the_same_connection(): void
+    {
+        config(['database.connections.mysql' => [
+            'host' => '127.0.0.1', 'port' => '3306', 'database' => 'saved_db', 'username' => 'saved_user', 'password' => 'saved-secret',
+        ] + config('database.connections.mysql')]);
+
+        $passwords = [];
+        $this->partialMock(InstallationService::class, function ($mock) use (&$passwords): void {
+            $mock->shouldReceive('configureDatabase')->andReturnUsing(function (array $settings) use (&$passwords): void {
+                $passwords[] = $settings['password'];
+            });
+            $mock->shouldReceive('migrate');
+        });
+
+        $form = ['driver' => 'mysql', 'db_host' => '127.0.0.1', 'db_port' => 3306, 'database' => 'saved_db', 'username' => 'saved_user'];
+
+        $this->post(route('install.database.save'), $form);
+        $this->post(route('install.database.save'), [...$form, 'password' => 'typed-pass']);
+        $this->post(route('install.database.save'), [...$form, 'username' => 'someone_else']);
+
+        $this->assertSame(['saved-secret', 'typed-pass', null], $passwords);
     }
 
     public function test_the_administrator_step_needs_the_database_step_first(): void

@@ -33,14 +33,18 @@ class InstallController extends Controller
             return to_route('install.welcome');
         }
 
+        $saved = config('database.connections.mysql');
+
+        // Prefill from .env, so a server set up by hand only needs a click; the password itself is never echoed.
         return view('install.database', [
             'defaults' => [
                 'driver' => old('driver', 'mysql'),
-                'host' => old('host', '127.0.0.1'),
-                'port' => old('port', '3306'),
-                'database' => old('database'),
-                'username' => old('username', 'root'),
+                'host' => old('db_host', $saved['host'] ?? '127.0.0.1'),
+                'port' => old('db_port', $saved['port'] ?? '3306'),
+                'database' => old('database', $saved['database'] ?? null),
+                'username' => old('username', $saved['username'] ?? 'root'),
             ],
+            'hasSavedPassword' => filled($saved['password'] ?? null),
         ]);
     }
 

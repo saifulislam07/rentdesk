@@ -236,6 +236,8 @@ class InstallationService
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
             'strict' => true,
+            // Hosts whose MySQL defaults to MyISAM need DB_ENGINE=InnoDB, or the migrations fail on key length.
+            'engine' => config('database.connections.mysql.engine'),
         ];
     }
 }
